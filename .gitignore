@@ -1,0 +1,31 @@
+/def/
+/ph/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Build and package artifacts
+build/
+dist/
+*.egg-info/
+.Python
+
+# Coverage and notebook checkpoints
+.coverage
+.coverage.*
+htmlcov/
+.ipynb_checkpoints/
+.DS_Store
