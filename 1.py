@@ -34,7 +34,7 @@ def q(x, bits):
 
 
 f=14
-fs = 2*f
+fs = 2*70
 duration = 1
 N = fs * duration
 
