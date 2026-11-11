@@ -29,7 +29,6 @@ s_indoor = 4          # площадь торговых и бизнес-цент
 n_sectors = 3         # число секторов одной БС
 k_area = 1.95         # коэффициент площади для трёх секторов
 
-# Бюджеты каналов: в UL принимает БС, в DL принимает телефон
 loss = l_feeder + l_lna + l_jumper
 gain = g_bs + g_ue + g_mimo
 margin = m_wall + m_interference
@@ -43,10 +42,9 @@ mapl_ul = p_ue - loss + gain - margin - rx_bs
 mapl_dl = p_bs - loss + gain - margin - rx_ue
 
 
-# Расстояния для общего графика заданы в километрах
 d = np.linspace(0.03, 6, 700)
 
-# COST 231 Hata: частота в МГц, расстояние в км
+# COST 231 Hata
 a = 3.2 * np.log10(11.75 * h_ue) ** 2 - 4.97
 cost_base = 46.3 + 33.9 * np.log10(f) - 13.82 * np.log10(h_bs) - a + l_clutter
 s_near = (47.88 + 13.9 * np.log10(f / h_bs)) / np.log10(50)
@@ -60,7 +58,6 @@ for distance in d:
         s = s_far
     pl_cost.append(cost_base + s * np.log10(distance))
 
-# При d = 1 км потери равны cost_base, по нему выбираем ветвь для радиуса
 if mapl_ul < cost_base:
     r_cost_ul = 10 ** ((mapl_ul - cost_base) / s_near)
 else:
@@ -77,16 +74,14 @@ pl_umi = umi_base + 36.7 * np.log10(d * 1000)
 r_umi_ul = 10 ** ((mapl_ul - umi_base) / 36.7) / 1000
 r_umi_dl = 10 ** ((mapl_dl - umi_base) / 36.7) / 1000
 
-# Walfisch-Ikegami для прямой видимости (LOS), расстояние в км
+# Walfisch-Ikegami
 wi_base = 42.6 + 20 * np.log10(f)
 pl_wi = wi_base + 26 * np.log10(d)
 r_wi_ul = 10 ** ((mapl_ul - wi_base) / 26)
 r_wi_dl = 10 ** ((mapl_dl - wi_base) / 26)
 
-# Потери в свободном пространстве для сравнения
 pl_fspl = 32.44 + 20 * np.log10(f) + 20 * np.log10(d)
 
-# Берём меньший радиус, чтобы связь работала в обе стороны
 models = [
     ("COST 231", r_cost_ul, r_cost_dl, s_city),
     ("UMi NLOS", r_umi_ul, r_umi_dl, s_indoor),
@@ -94,17 +89,15 @@ models = [
 ]
 
 for name, r_ul, r_dl, area in models:
-    radius = min(r_ul, r_dl)
-    s_bs = k_area * radius ** 2
+    s_bs = k_area * r_ul ** 2
     n_bs = ceil(area / s_bs)
 
     print(f"\n{name}")
     print(f"Радиус UL = {r_ul} км, DL = {r_dl} км")
-    print(f"Радиус соты = {radius} км")
+    print(f"Радиус соты = {r_ul} км")
     print(f"Площадь одной БС = {s_bs} км²")
     print(f"Количество БС = {n_bs}, секторов = {n_bs * n_sectors}")
 
-# Общий график потерь и уровни MAPL
 plt.figure()
 plt.plot(d, pl_cost, label="COST 231")
 plt.plot(d, pl_umi, label="UMi NLOS")
