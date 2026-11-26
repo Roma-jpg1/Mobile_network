@@ -26,6 +26,7 @@ Y = abs(mDFTT(y)) / N
 Y = Y(1:floor(N/2)+1);
 
 f = (0:floor(N/2)) * Fs / N;
+/opt/homebrew/bin/python3 /tmp/gta_retry_install.py
 
 
 
